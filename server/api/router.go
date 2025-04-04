@@ -22,6 +22,9 @@ func SetupRoutes(app *fiber.App, amqpCh *amqp.Channel) {
 	api.Post("/google/login", authHandler.GoogleLogin)
 	api.Get("/google/callback", authHandler.GoogleCallback)
 
+	api.Post("/microsoft/login", authHandler.MicrosoftLogin)
+	api.Get("/microsoft/callback", authHandler.MicrosoftCallback)
+
 	emailHandler := email.NewEmailHandler(amqpCh)
 
 	emailGroup := app.Group("/email")

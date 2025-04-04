@@ -3,13 +3,21 @@ module github.com/nynrathod/email-queue
 go 1.23.7
 
 require (
+	github.com/go-playground/validator/v10 v10.26.0
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/spf13/viper v1.20.1
 	gorm.io/driver/postgres v1.5.11
 	gorm.io/gorm v1.25.12
 )
 
-require cloud.google.com/go/compute/metadata v0.6.0 // indirect
+require (
+	cloud.google.com/go/compute/metadata v0.6.0 // indirect
+	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
+	github.com/go-playground/locales v0.14.1 // indirect
+	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/leodido/go-urn v1.4.0 // indirect
+	golang.org/x/net v0.34.0 // indirect
+)
 
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect

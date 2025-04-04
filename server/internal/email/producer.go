@@ -3,19 +3,19 @@ package email
 import (
 	"context"
 	"encoding/json"
-	"log"
+	"fmt"
 	"time"
 
 	"github.com/nynrathod/email-queue/internal/domain"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-func PublishSendEmailEvent(ch *amqp.Channel, event domain.SendEmailEvent) error {
+func PublishSendEmailEvent(ch *amqp.Channel, queueName string, event domain.SendEmailEvent) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	q, err := ch.QueueDeclare(
-		"email_queue",
+		queueName,
 		true,
 		false,
 		false,
@@ -23,13 +23,13 @@ func PublishSendEmailEvent(ch *amqp.Channel, event domain.SendEmailEvent) error 
 		nil,
 	)
 	if err != nil {
-		log.Printf("❌ Failed to declare queue: %v", err)
+		fmt.Println("queue declare error:", err)
 		return err
 	}
 
 	body, err := json.Marshal(event)
 	if err != nil {
-		log.Printf("❌ Failed to marshal event: %v", err)
+		fmt.Println("marshal error:", err)
 		return err
 	}
 
@@ -45,10 +45,10 @@ func PublishSendEmailEvent(ch *amqp.Channel, event domain.SendEmailEvent) error 
 		},
 	)
 	if err != nil {
-		log.Printf("❌ Failed to publish message: %v", err)
+		fmt.Println("publish error:", err)
 		return err
 	}
 
-	log.Printf("📤 Published event to queue: %+v", event)
+	fmt.Println("published event to queue:", queueName, event)
 	return nil
 }

@@ -22,13 +22,7 @@ a:hover {
   color: #535bf2;
 }
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
+
 
 h1 {
   font-size: 3.2em;
@@ -52,6 +46,24 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+#root {
+  height: 100vh;
+  display: grid;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container {
+  gap: 0 5px;
+  display: flex;
+  justify-content: center;
+}
+.grid {
+  text-align:  center;
+  gap: 5px 0;
+  display: grid;
 }
 
 @media (prefers-color-scheme: light) {

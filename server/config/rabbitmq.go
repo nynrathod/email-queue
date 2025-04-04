@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -12,5 +13,6 @@ func ConnectRabbitMQ() *amqp.Connection {
 	if err != nil {
 		log.Fatalf("🐰 Failed to connect to RabbitMQ: %v", err)
 	}
+	fmt.Println("Connected to RabbitMQ")
 	return conn
 }
