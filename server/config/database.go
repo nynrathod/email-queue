@@ -2,11 +2,10 @@ package config
 
 import (
 	"fmt"
-	"os/user"
 
 	"log"
 
-	//"github.com/nynrathod/uber-ride/internal/user"
+	"github.com/nynrathod/email-queue/internal/domain"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -24,6 +23,7 @@ func ConnectDB() *gorm.DB {
 		EnvConfigs.DbUser,
 		EnvConfigs.DbPassword,
 		EnvConfigs.DbName,
+		EnvConfigs.DbPort,
 	)
 	fmt.Println("DSN:", dsn)
 
@@ -54,7 +54,7 @@ func GetDB() *gorm.DB {
 // MigrateDB runs auto-migration for all models.
 func MigrateDB() {
 	err := DB.AutoMigrate(
-		&user.User{},
+		&domain.Auth{},
 	)
 	if err != nil {
 		log.Fatal("❌ Migration failed:", err)

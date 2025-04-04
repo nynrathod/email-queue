@@ -1,17 +1,25 @@
 package config
 
 import (
-	"github.com/spf13/viper"
 	"log"
+
+	"github.com/spf13/viper"
 )
 
 var EnvConfigs *envConfigs
 
 type envConfigs struct {
-	DbName     string `mapstructure:"DB_NAME"`
-	DbHost     string `mapstructure:"DB_HOST"`
-	DbUser     string `mapstructure:"DB_USER"`
-	DbPassword string `mapstructure:"DB_PASSWORD"`
+	DbName              string `mapstructure:"DB_NAME"`
+	DbHost              string `mapstructure:"DB_HOST"`
+	DbUser              string `mapstructure:"DB_USER"`
+	DbPassword          string `mapstructure:"DB_PASSWORD"`
+	DbPort              string `mapstructure:"DB_PORT"`
+	RabbitMQURL         string `mapstructure:"RABBITMQ_URL"`
+	GoogleClientId      string `mapstructure:"OAUTH_GOOGLE_CLIENT_ID"`
+	GoogleClientSEcrete string `mapstructure:"OAUTH_MICROSOFT_CLIENT_SECRETE"`
+
+	MicrosoftClientId      string `mapstructure:"OAUTH_MICROSOFT_CLIENT_ID"`
+	MicrosoftClientSEcrete string `mapstructure:"OAUTH_MICROSOFT_CLIENT_SECRETE"`
 }
 
 func InitEnvConfigs() *envConfigs {
