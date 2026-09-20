@@ -1,0 +1,29 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../../src/generated/api"
+  moduleFormat = "esm"
+}
+
+model EmailJob {
+  id             String    @id @default(uuid())
+  idempotencyKey String    @unique
+  tenantId       String
+  from           String
+  to             String
+  subject        String
+  text           String
+  html           String?
+  provider       String
+  status         String    @default("QUEUED")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deliveredAt    DateTime?
+  lastErrorCode  String?
+
+  @@index([tenantId, createdAt])
+  @@map("email_jobs")
+}

@@ -1,0 +1,19 @@
+datasource db {
+  provider = "postgresql"
+}
+
+model DeliveryAttempt {
+  id         String   @id @default(uuid())
+  jobId      String
+  attempt    Int
+  provider   String
+  outcome    String
+  messageId  String?
+  errorCode  String?
+  latencyMs  Int?
+  createdAt  DateTime @default(now())
+
+  @@unique([jobId, attempt])
+  @@index([jobId])
+  @@map("delivery_attempts")
+}
