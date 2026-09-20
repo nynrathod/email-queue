@@ -7,3 +7,5 @@ export * from './redis/redis.module.js';
 export * from './rabbitmq/rabbitmq.service.js';
 export * from './rabbitmq/rabbitmq.module.js';
 export * from './rabbitmq/topology.bootstrap.js';
+export * from './pg/pg-pool.service.js';
+export * from './pg/pg.module.js';

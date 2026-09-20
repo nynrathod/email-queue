@@ -19,6 +19,11 @@ const workerEnvSchema = z.object({
   SMTP_PASS: z.string().optional(),
   TOKEN_ENCRYPTION_KEY: z.string().length(64),
   METRICS_PORT: z.coerce.number().int().min(1).max(65535).default(9464),
+
+  RATE_LIMIT_PER_SECOND: z.coerce.number().int().min(1).default(100),
+  RATE_LIMIT_BURST: z.coerce.number().int().min(1).default(200),
+  BREAKER_FAILURE_THRESHOLD: z.coerce.number().int().min(1).default(5),
+  BREAKER_COOLDOWN_MS: z.coerce.number().int().min(1000).default(30_000),
 });
 
 export type WorkerEnv = z.infer<typeof workerEnvSchema>;

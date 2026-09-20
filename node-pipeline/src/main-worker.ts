@@ -13,4 +13,7 @@ async function bootstrap(): Promise<void> {
   logger.log(`worker listening on :${env.WORKER_PORT}`, 'Bootstrap');
 }
 
-void bootstrap();
+bootstrap().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
