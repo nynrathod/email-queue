@@ -8,11 +8,14 @@ import amqp, { type ChannelModel, type ConfirmChannel } from 'amqplib';
 import { PinoLoggerService } from '../logger/pino-logger.service.js';
 import { assertTopology } from './topology.bootstrap.js';
 
+type ChannelReadyCallback = (channel: ConfirmChannel) => Promise<void> | void;
+
 @Injectable()
 export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
   private connection?: ChannelModel;
   private channel?: ConfirmChannel;
   private reconnecting = false;
+  private readonly channelReadyCallbacks = new Set<ChannelReadyCallback>();
 
   constructor(private readonly logger: PinoLoggerService) {}
 
@@ -27,6 +30,19 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
   async onModuleDestroy(): Promise<void> {
     await this.channel?.close();
     await this.connection?.close();
+  }
+
+  onChannelReady(callback: ChannelReadyCallback): void {
+    this.channelReadyCallbacks.add(callback);
+    if (this.channel) {
+      Promise.resolve(callback(this.channel)).catch((error) => {
+        this.logger.error(
+          `channel-ready callback failed: ${String(error)}`,
+          undefined,
+          'RabbitmqService',
+        );
+      });
+    }
   }
 
   async publish(
@@ -66,6 +82,17 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
       'rabbitmq connected and topology asserted',
       'RabbitmqService',
     );
+    for (const callback of this.channelReadyCallbacks) {
+      try {
+        await callback(channel);
+      } catch (error) {
+        this.logger.error(
+          `channel-ready callback failed: ${String(error)}`,
+          undefined,
+          'RabbitmqService',
+        );
+      }
+    }
   }
 
   private scheduleReconnect(): void {

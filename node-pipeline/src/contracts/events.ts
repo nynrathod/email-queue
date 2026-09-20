@@ -1,10 +1,11 @@
 import { z } from 'zod';
-import { submitEmailJobSchema } from './email-job.js';
+import { providerNameSchema, submitEmailJobSchema } from './email-job.js';
 
 export const emailJobMessageSchema = submitEmailJobSchema
-  .omit({ idempotencyKey: true })
+  .omit({ idempotencyKey: true, provider: true })
   .extend({
     jobId: z.uuid(),
+    provider: providerNameSchema,
     attempt: z.number().int().min(0),
     publishedAt: z.number().int().positive(),
   });

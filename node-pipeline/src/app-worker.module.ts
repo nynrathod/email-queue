@@ -1,8 +1,16 @@
 import { Module } from '@nestjs/common';
-import { LoggerModule } from './infra/index.js';
+import { DeliveryModule } from './delivery/delivery.module.js';
 import { HealthModule } from './health/health.module.js';
+import { LoggerModule, RabbitmqModule } from './infra/index.js';
+import { ProvidersModule } from './providers/providers.module.js';
 
 @Module({
-  imports: [LoggerModule.forRoot({ app: 'worker' }), HealthModule],
+  imports: [
+    LoggerModule.forRoot({ app: 'worker' }),
+    RabbitmqModule,
+    ProvidersModule,
+    DeliveryModule,
+    HealthModule,
+  ],
 })
 export class WorkerAppModule {}

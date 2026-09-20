@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ApiPrismaService } from '../infra/index.js';
 import {
+  JOB_REPOSITORY,
   type CreateJobInput,
   type EmailJobRecord,
-  JOB_REPOSITORY,
   type JobRepository,
 } from './ports.js';
 
@@ -25,6 +25,31 @@ export class EmailJobsRepository implements JobRepository {
     await this.prisma.emailJob.update({
       where: { id },
       data: { status: 'PUBLISHED' },
+    });
+  }
+
+  async markDelivered(id: string): Promise<void> {
+    await this.prisma.emailJob.updateMany({
+      where: { id },
+      data: {
+        status: 'DELIVERED',
+        deliveredAt: new Date(),
+        lastErrorCode: null,
+      },
+    });
+  }
+
+  async markRetryScheduled(id: string): Promise<void> {
+    await this.prisma.emailJob.updateMany({
+      where: { id },
+      data: { status: 'RETRY_SCHEDULED' },
+    });
+  }
+
+  async markDeadLettered(id: string, errorCode?: string): Promise<void> {
+    await this.prisma.emailJob.updateMany({
+      where: { id },
+      data: { status: 'DEAD_LETTERED', lastErrorCode: errorCode },
     });
   }
 }

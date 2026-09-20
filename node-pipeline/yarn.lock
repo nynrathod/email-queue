@@ -1549,6 +1549,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/nodemailer@npm:^8.0.2":
+  version: 8.0.2
+  resolution: "@types/nodemailer@npm:8.0.2"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/1ad3f83ac130cf9af65ce9eb7985b08b27b4723316c2be621522effc31c63d7d2d76880815490499fbe8b1aff3da889d24b54b3db892526d1166b12702404ff0
+  languageName: node
+  linkType: hard
+
 "@types/pg@npm:^8.16.0, @types/pg@npm:^8.23.1":
   version: 8.23.1
   resolution: "@types/pg@npm:8.23.1"
@@ -2771,6 +2780,7 @@ __metadata:
     "@types/amqplib": "npm:^0.10.8"
     "@types/express": "npm:^5.0.0"
     "@types/node": "npm:^24.0.0"
+    "@types/nodemailer": "npm:^8.0.2"
     "@types/pg": "npm:^8.23.1"
     "@types/supertest": "npm:^7.0.0"
     "@vitest/coverage-v8": "npm:^4.1.2"
@@ -2779,6 +2789,7 @@ __metadata:
     dotenv: "npm:^18.0.1"
     helmet: "npm:^8.3.0"
     ioredis: "npm:^6.0.0"
+    nodemailer: "npm:^10.0.10"
     oxlint: "npm:^1.58.0"
     oxlint-tsgolint: "npm:^7.0.2001"
     pg: "npm:^8.23.0"
@@ -4072,6 +4083,13 @@ __metadata:
   bin:
     node-gyp: bin/node-gyp.js
   checksum: 10c0/29d33ccf47ffeeb5e7af925550b416f698a26a72eb10975c7eb5775c1d0cecacd76d164a4aa45503d3ddcece209db65c712be00423c69381a4cd14e2e6540559
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:^10.0.10":
+  version: 10.0.10
+  resolution: "nodemailer@npm:10.0.10"
+  checksum: 10c0/062bf0861e4986eca150b8d78b8289c55f33ad689e9596aa71b4abd4ab4358b9c4881cec8acca3251643814d84d26ca6b1082153f47d35d65639d4ce858cfd67
   languageName: node
   linkType: hard
 

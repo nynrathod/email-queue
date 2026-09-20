@@ -9,6 +9,7 @@ import {
   JOB_REPOSITORY_PROVIDER,
 } from './email-jobs.repository.js';
 import { EmailJobsService } from './email-jobs.service.js';
+import { StatusConsumer } from './status.consumer.js';
 
 @Module({
   controllers: [EmailJobsController],
@@ -18,6 +19,7 @@ import { EmailJobsService } from './email-jobs.service.js';
     EmailJobsPublisher,
     JOB_REPOSITORY_PROVIDER,
     JOB_PUBLISHER_PROVIDER,
+    StatusConsumer,
   ],
 })
 export class EmailJobsModule {}

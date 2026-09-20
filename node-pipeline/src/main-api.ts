@@ -10,6 +10,7 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(ApiAppModule, { logger: false });
   const logger = app.get(PinoLoggerService);
   app.useLogger(logger);
+  app.enableShutdownHooks();
   app.useGlobalFilters(new HttpExceptionFilter());
   app.use(helmet());
   app.enableCors({

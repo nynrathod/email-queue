@@ -8,6 +8,8 @@ const workerEnvSchema = z.object({
     .default('development'),
   WORKER_PORT: z.coerce.number().int().min(1).max(65535).default(3001),
   EMAIL_PROVIDER: providerNameSchema.default('smtp'),
+  CONSUMER_PREFETCH: z.coerce.number().int().min(1).max(1000).default(10),
+  SMTP_MAX_CONNECTIONS: z.coerce.number().int().min(1).max(64).default(4),
   WORKER_DATABASE_URL: z.string().min(1),
   RABBITMQ_URL: z.string().min(1),
   REDIS_URL: z.string().min(1),

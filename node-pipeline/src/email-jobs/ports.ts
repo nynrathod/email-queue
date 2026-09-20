@@ -26,6 +26,9 @@ export interface JobRepository {
   create(input: CreateJobInput): Promise<EmailJobRecord>;
   findById(id: string): Promise<EmailJobRecord | null>;
   markPublished(id: string): Promise<void>;
+  markDelivered(id: string): Promise<void>;
+  markRetryScheduled(id: string): Promise<void>;
+  markDeadLettered(id: string, errorCode?: string): Promise<void>;
 }
 
 export interface JobPublisher {

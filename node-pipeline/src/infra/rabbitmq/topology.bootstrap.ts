@@ -9,6 +9,9 @@ export async function assertTopology(channel: ConfirmChannel): Promise<void> {
   await channel.assertExchange(TOPOLOGY.deadLetterExchange, 'direct', {
     durable: true,
   });
+  await channel.assertExchange(TOPOLOGY.statusExchange, 'direct', {
+    durable: true,
+  });
 
   await channel.assertQueue(TOPOLOGY.mainQueue, { durable: true });
   await channel.bindQueue(
@@ -35,5 +38,12 @@ export async function assertTopology(channel: ConfirmChannel): Promise<void> {
     TOPOLOGY.deadLetterQueue,
     TOPOLOGY.deadLetterExchange,
     TOPOLOGY.deadLetterRoutingKey,
+  );
+
+  await channel.assertQueue(TOPOLOGY.statusQueue, { durable: true });
+  await channel.bindQueue(
+    TOPOLOGY.statusQueue,
+    TOPOLOGY.statusExchange,
+    TOPOLOGY.statusRoutingKey,
   );
 }
