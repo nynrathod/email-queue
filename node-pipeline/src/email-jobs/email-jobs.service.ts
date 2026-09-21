@@ -10,7 +10,11 @@ import {
   type EmailJobMessage,
   type SubmitEmailJobBody,
 } from '../contracts/index.js';
-import { PinoLoggerService, RedisService } from '../infra/index.js';
+import {
+  MetricsService,
+  PinoLoggerService,
+  RedisService,
+} from '../infra/index.js';
 import {
   toEmailJobResponse,
   type EmailJobResponse,
@@ -32,6 +36,7 @@ export class EmailJobsService {
     @Inject(JOB_PUBLISHER) private readonly publisher: JobPublisher,
     private readonly redis: RedisService,
     private readonly logger: PinoLoggerService,
+    private readonly metrics: MetricsService,
   ) {}
 
   async submit(
@@ -90,6 +95,7 @@ export class EmailJobsService {
     try {
       await this.publisher.publish(message);
       await this.repository.markPublished(jobId);
+      this.metrics.jobsSubmitted.inc();
     } catch (error) {
       await this.redis.redis.del(key);
       this.logger.error(

@@ -1,0 +1,97 @@
+services:
+  rabbitmq:
+    image: rabbitmq:4-management
+    hostname: rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+  postgres:
+    image: postgres:17-alpine
+    command: ["postgres", "-c", "max_connections=300"]
+    environment:
+      POSTGRES_USER: email
+      POSTGRES_PASSWORD: email_dev
+    volumes:
+      - pgbench:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U email"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+  redis:
+    image: redis:8-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+  mailpit:
+    image: axllent/mailpit
+    command: ["--max", "1000000"]
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/nginx-bench.conf:/etc/nginx/nginx.conf:ro
+  migrate:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: ["sh", "-c", "yarn prisma migrate deploy --schema prisma/api/schema.prisma && yarn prisma migrate deploy --config prisma.worker.config.ts"]
+    profiles: ["migrate"]
+    environment:
+      DATABASE_URL: postgresql://email:email_dev@postgres:5432/email_api_db
+      WORKER_DATABASE_URL: postgresql://email:email_dev@postgres:5432/email_worker_db
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: ["node", "dist/main-api.js"]
+    environment:
+      NODE_ENV: production
+      PORT: 3010
+      DATABASE_URL: postgresql://email:email_dev@postgres:5432/email_api_db
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      REDIS_URL: redis://redis:6379
+      API_KEY: local-dev-api-key-change-me-please
+      CORS_ORIGINS: ""
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3010/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+  worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: ["node", "dist/main-worker.js"]
+    environment:
+      NODE_ENV: production
+      WORKER_PORT: 3001
+      WORKER_DATABASE_URL: postgresql://email:email_dev@postgres:5432/email_worker_db
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+      REDIS_URL: redis://redis:6379
+      EMAIL_PROVIDER: smtp
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+      SMTP_USER: ""
+      SMTP_PASS: ""
+      TOKEN_ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      METRICS_PORT: 9464
+      CONSUMER_PREFETCH: 200
+      SMTP_MAX_CONNECTIONS: 16
+      RATE_LIMIT_PER_SECOND: 100000
+      RATE_LIMIT_BURST: 200000
+  loadgen:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    command: ["node", "benchmark/loadgen.mjs"]
+    profiles: ["load"]
+    environment:
+      API_URL: http://nginx:3000
+      API_KEY: local-dev-api-key-change-me-please
+volumes:
+  pgbench:

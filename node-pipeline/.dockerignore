@@ -1,0 +1,9 @@
+node_modules
+dist
+.git
+.env
+benchmark/results.json
+benchmark/k6-output.txt
+benchmark/k6-error.txt
+benchmark/loadgen-output.txt
+benchmark/loadgen-error.txt

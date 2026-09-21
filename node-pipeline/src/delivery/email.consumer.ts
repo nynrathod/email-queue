@@ -5,7 +5,11 @@ import {
 } from '@nestjs/common';
 import type { ConfirmChannel, ConsumeMessage } from 'amqplib';
 import { TOPOLOGY, emailJobMessageSchema } from '../contracts/index.js';
-import { PinoLoggerService, RabbitmqService } from '../infra/index.js';
+import {
+  MetricsService,
+  PinoLoggerService,
+  RabbitmqService,
+} from '../infra/index.js';
 import { type DeliveryOutcome, DeliveryService } from './delivery.service.js';
 
 const DRAIN_TIMEOUT_MS = 10_000;
@@ -18,10 +22,12 @@ export class EmailConsumer implements OnModuleInit, OnModuleDestroy {
   constructor(
     private readonly rabbitmq: RabbitmqService,
     private readonly delivery: DeliveryService,
+    private readonly metrics: MetricsService,
     private readonly logger: PinoLoggerService,
   ) {}
 
   onModuleInit(): void {
+    this.metrics.startQueueDepthPolling();
     this.rabbitmq.onChannelReady((channel) => this.start(channel));
   }
 

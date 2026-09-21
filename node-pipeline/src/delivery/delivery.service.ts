@@ -8,7 +8,11 @@ import {
   TransientProviderError,
   retryQueueName,
 } from '../contracts/index.js';
-import { PinoLoggerService, RabbitmqService } from '../infra/index.js';
+import {
+  MetricsService,
+  PinoLoggerService,
+  RabbitmqService,
+} from '../infra/index.js';
 import { ProviderFactory } from '../providers/provider.factory.js';
 import { CircuitBreakerService } from '../resilience/circuit-breaker.service.js';
 import { RateLimiterService } from '../resilience/rate-limiter.service.js';
@@ -28,6 +32,7 @@ export class DeliveryService {
     private readonly idempotency: IdempotencyGuard,
     private readonly rateLimiter: RateLimiterService,
     private readonly circuitBreaker: CircuitBreakerService,
+    private readonly metrics: MetricsService,
     private readonly logger: PinoLoggerService,
   ) {}
 
@@ -41,6 +46,7 @@ export class DeliveryService {
 
     const reserved = await this.idempotency.reserve(message);
     if (!reserved) {
+      this.metrics.duplicatesSkipped.inc();
       this.logger.warn(
         `job ${message.jobId} attempt ${message.attempt} already completed, duplicate redelivery skipped`,
         'DeliveryService',
@@ -59,6 +65,11 @@ export class DeliveryService {
         messageId: result.providerMessageId,
         latencyMs,
       });
+      this.metrics.jobsDelivered.inc({ provider: message.provider });
+      this.metrics.sendDuration.observe(latencyMs / 1000);
+      this.metrics.deliveryDuration.observe(
+        (Date.now() - message.publishedAt) / 1000,
+      );
       await this.publishStatus({
         jobId: message.jobId,
         tenantId: message.tenantId,
@@ -87,6 +98,7 @@ export class DeliveryService {
       this.circuitBreaker.recordFailure(message.provider);
       const decision = decideFailureAction(message.attempt);
       if (decision.action === 'RETRY') {
+        this.metrics.jobsRetried.inc({ provider: message.provider });
         await this.idempotency.complete(message.jobId, message.attempt, {
           outcome: 'FAILED',
           errorCode: error.code,
@@ -143,6 +155,7 @@ export class DeliveryService {
     detail: string,
     latencyMs: number,
   ): Promise<DeliveryOutcome> {
+    this.metrics.jobsDeadLettered.inc({ provider: message.provider });
     await this.idempotency.complete(message.jobId, message.attempt, {
       outcome: 'FAILED',
       errorCode,

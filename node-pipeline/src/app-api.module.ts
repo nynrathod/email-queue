@@ -5,6 +5,7 @@ import { EmailJobsModule } from './email-jobs/email-jobs.module.js';
 import { HealthModule } from './health/health.module.js';
 import {
   LoggerModule,
+  MetricsModule,
   PrismaModule,
   RabbitmqModule,
   RedisModule,
@@ -18,6 +19,7 @@ import {
     RabbitmqModule,
     EmailJobsModule,
     HealthModule,
+    MetricsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ApiKeyGuard }],
 })

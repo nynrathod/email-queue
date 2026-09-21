@@ -1,7 +1,12 @@
 import { Module } from '@nestjs/common';
 import { DeliveryModule } from './delivery/delivery.module.js';
 import { HealthModule } from './health/health.module.js';
-import { LoggerModule, RabbitmqModule, RedisModule } from './infra/index.js';
+import {
+  LoggerModule,
+  MetricsModule,
+  RabbitmqModule,
+  RedisModule,
+} from './infra/index.js';
 import { ProvidersModule } from './providers/providers.module.js';
 
 @Module({
@@ -12,6 +17,7 @@ import { ProvidersModule } from './providers/providers.module.js';
     ProvidersModule,
     DeliveryModule,
     HealthModule,
+    MetricsModule,
   ],
 })
 export class WorkerAppModule {}

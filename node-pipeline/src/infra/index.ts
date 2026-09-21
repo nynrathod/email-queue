@@ -9,3 +9,6 @@ export * from './rabbitmq/rabbitmq.module.js';
 export * from './rabbitmq/topology.bootstrap.js';
 export * from './pg/pg-pool.service.js';
 export * from './pg/pg.module.js';
+export * from './metrics/metrics.service.js';
+export * from './metrics/metrics.controller.js';
+export * from './metrics/metrics.module.js';
