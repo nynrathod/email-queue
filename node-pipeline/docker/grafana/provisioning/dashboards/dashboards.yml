@@ -1,6 +1,6 @@
 apiVersion: 1
 providers:
-  - name: email-delivery
+  - name: email-flow
     folder: Email Delivery
     type: file
     options:

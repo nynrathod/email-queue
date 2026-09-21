@@ -1,7 +1,7 @@
 
 # MailStream
 
-Distributed email-delivery platform. An idempotent submission API tier (nginx load-balanced) publishes jobs to RabbitMQ; independent workers deliver over pooled SMTP with bounded retries, circuit breakers, and dead-lettering. Two services, two databases, one event log - delivery status flows back as events, never shared tables.
+Distributed email-flow platform. An idempotent submission API tier (nginx load-balanced) publishes jobs to RabbitMQ; independent workers deliver over pooled SMTP with bounded retries, circuit breakers, and dead-lettering. Two services, two databases, one event log - delivery status flows back as events, never shared tables.
 
 ```text
                         ┌──────────────────────────┐
